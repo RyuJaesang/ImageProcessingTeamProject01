@@ -50,6 +50,8 @@ Mat binarycaling(Mat input, int height, int width) {
 
 
 
+
+
 int main()
 {
 	Mat img_color = imread("C:\\Users\\RyuJaesang\\Desktop\\IPTeamProject01\\triangle3.png", IMREAD_COLOR);
@@ -59,18 +61,80 @@ int main()
 
 	Mat img_grayscale = grayscaling(img_color, height, width);
 	Mat img_binaryscale = binarycaling(img_grayscale, height, width);
-	
+	printf("IMP is done\n");
+	printf("height is %d", height);
+	printf("width is %d", width);
 
-	/*
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			intensity = img_grayscale.at<uchar>(y, x);
-
-
+	//upsideXY
+	bool upsideDetect = false;
+	int upsideX = 0;
+	int upsideY = 0;
+	int intensity;
+	for (upsideY; upsideY < height; upsideY++) {
+		for (upsideX; upsideX < width; upsideX++) {
+			intensity = img_binaryscale.at<uchar>(upsideY, upsideX);
+			if (intensity == 0) {
+				upsideDetect = true;
+			}
+			printf(upsideDetect ? "true" : "false");
+			printf("intensity(%d, %d) is %d\n", upsideX, upsideY, intensity);
+			if (upsideDetect) {
+				break;
+			}
+		}
+		if (upsideDetect) {
+			break;//브레이크 계속 걸림
 
 		}
 	}
-	*/
+
+	//leftsideXY
+	bool leftsideDetect = false;
+	int leftsideX = 0;
+	int leftsideY = 0;
+	for (leftsideY; leftsideY < height; leftsideY++) {
+		for (leftsideX; leftsideX < width; leftsideX++) {
+			intensity = img_binaryscale.at<uchar>(leftsideY, leftsideX);
+			if (intensity == 0) {
+				leftsideDetect = true;
+			}
+			if (leftsideDetect) break;
+		}
+		if (leftsideDetect) break;
+	}
+	printf("side detect is done\n");
+	
+	//DetectShpae
+	int medianX = (upsideX + leftsideX) / 2;
+	int medianY = (upsideY + leftsideY) / 2;
+	printf("upsideX is %d\n", upsideX);
+	printf("upsideY is %d\n", upsideY);
+
+	printf("leftsideX is %d\n", leftsideX);
+	printf("leftsideY is %d\n", leftsideY);
+	
+
+	printf("medianX is %d\n", medianX);
+	printf("width is %d\n", width);
+	printf("height is %d\n", height);
+
+	int testY = 0;
+	bool shapeDetect = false;
+	for (testY; testY < height; testY++) {
+		int intensity = img_binaryscale.at<uchar>(testY, medianX);
+		if (intensity == 0) {
+			shapeDetect = true;
+		}
+		if (shapeDetect) break;
+	}
+
+	if (testY == medianY) {
+		printf("Triangle is detected");
+	}
+	else {
+		printf("Circle is detected");
+	}
+
 
 
 
